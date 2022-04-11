@@ -1,14 +1,37 @@
 #include<iostream>
 using namespace std;
 #include<vector>
-int Iterative_Compute_Opt(int n, vector<int>V,vector<int>P)
+
+//µÝ¹é
+int Compute_Opt(int j,int n, vector<int>V, vector<int>P)
+{
+
+	if (j == 0)
+		return 0;
+
+	return max(V[j] + Compute_Opt(P[j], n, V, P), Compute_Opt(j - 1, n, V, P));
+}
+
+int M_Compute_Opt(int j, int n, vector<int>V, vector<int>P,vector<int>M)
+{
+	if (j == 0)
+		return 0;
+	if (M[j] != -1)
+		return M[j];
+
+	M[j]=max(V[j] + M_Compute_Opt(P[j], n, V, P,M), M_Compute_Opt(j - 1, n, V, P,M));
+	return M[j];
+}
+
+//µü´ú
+vector<int> Iterative_Compute_Opt(int n, vector<int>V,vector<int>P)
 {
 	vector<int>M(n + 1, 0);
 	for (int j = 1; j <= n; j++)
 	{
 		M[j] = max(V[j] + M[P[j]], M[j - 1]);
 	}
-	return M[n];
+	return M;
 }
 void main() {
 
@@ -34,7 +57,12 @@ void main() {
 			}
 		}
 	}
+	cout << Compute_Opt(n, n, v, p);
 
-	cout << Iterative_Compute_Opt(n, v, p);
+	vector<int>m(n + 1, -1);
+
+	cout << M_Compute_Opt(n, n, v, p, m);
+
+	cout<<Iterative_Compute_Opt(n, v, p)[n];
 
 }
