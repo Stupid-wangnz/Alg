@@ -11,17 +11,20 @@ class Node
 public:
 	double x;
 	double y;
+	int index;
 	Node() {}
 	Node(double x, double y) :x(x), y(y)
 	{}
 };
-vector<Node>nodes;
 
-double Distance(Node n1,Node n2) {
-	return (n1.x - n2.x) * (n1.x - n2.x) + (n1.y - n2.y) * (n1.y - n2.y);
+double Distance(Node* n1,Node* n2) {
+	return (n1->x - n2->x) * (n1->x - n2->x) + (n1->y - n2->y) * (n1->y - n2->y);
 }
-Node* Closest_Pair_Rec(vector<Node>Px, vector<Node>Py) {
+Node** Closest_Pair_Rec(vector<Node*>Px, vector<Node*>Py) {
 	//量度所有两点距离求出最邻近点对
+	/*if (Px.size() <= 1)
+		return nullptr;*/
+
 	if (Px.size() <= 3)
 	{
 		int n1, n2;
@@ -37,29 +40,37 @@ Node* Closest_Pair_Rec(vector<Node>Px, vector<Node>Py) {
 				}
 			}
 		}
-		Node* res_n = new Node[2]{ Px[n1],Px[n2] };
+		Node** res_n = new Node*[2]{ Px[n1],Px[n2] };
 		return res_n;
 	}
 
+	double x_maxInQ=Px[Px.size()/2-1]->x;
 
-	vector<Node>Qx(Px.begin(), Px.begin() + Px.size() / 2);
-	vector<Node>Qy(Py.begin(), Py.begin() + Py.size() / 2);
+	vector<Node*>Qx(Px.begin(),Px.begin()+Px.size()/2);
+	vector<Node*>Rx(Px.begin()+Px.size()/2,Px.end());
+	vector<Node*>Qy;
+	vector<Node*>Ry;
 
-	vector<Node>Rx(Px.begin() + Px.size() / 2, Px.end());
-	vector<Node>Ry(Py.begin() + Py.size() / 2, Py.end());
+	int indexMid = (Qx[Qx.size() - 1]->index + Rx[Rx.size() - 1]->index)/2;
 
-	Node* q = Closest_Pair_Rec(Qx, Qy);
-	Node* r = Closest_Pair_Rec(Rx, Ry);
+	for (int i = 0; i < Py.size(); i++)
+		if (Py[i]->index <= indexMid)
+			Qy.push_back(Py[i]);
+		else
+			Ry.push_back(Py[i]);
 
-	double min_len = min(Distance(q[0], q[1]), Distance(r[0], r[1]));
-
-	double x_maxInQ=Qx[Qx.size()-1].x;
+	Node** q = Closest_Pair_Rec(Qx, Qy);
+	double distance1 = Distance(q[0], q[1]);
+	Node** r = Closest_Pair_Rec(Rx, Ry);
+	double distance2 =Distance(r[0], r[1]);
+		
+	double min_len = min(distance1,distance2);
 
 	//S实际是按y排序的点集合
-	vector<Node>S;
+	vector<Node*>S;
 	for (int i = 0; i < Py.size(); i++)
 	{
-		if (abs(Py[i].x - x_maxInQ) < min_len)
+		if (abs(Py[i]->x - x_maxInQ) < min_len)
 			S.push_back(Py[i]);
 	}
 
@@ -75,47 +86,52 @@ Node* Closest_Pair_Rec(vector<Node>Px, vector<Node>Py) {
 			}
 		}
 	}
-
-	if (min_len_inS < min_len)
-		return new Node[2]{ S[ns1],S[ns2] };
 	
+	if (min_len_inS < min_len)
+		return new Node*[2]{ S[ns1],S[ns2] };
+
+	/*if (q == nullptr)
+		return r;
+	if (r == nullptr)
+		return q;
+	*/
 	if (Distance(q[0], q[1])<Distance(r[0],r[1]))
-		return new Node[2]{ q[0],q[1] };
+		return new Node*[2]{ q[0],q[1] };
 
-	return new Node[2]{ r[0],r[1] };
+	return new Node*[2]{ r[0],r[1] };
 }
-void Closest_Pair(vector<Node>P) {
-	vector<Node>X_nodes(P);
-	vector<Node>Y_nodes(P);
+void Closest_Pair(vector<Node*>P) {
+	vector<Node*>X_nodes(P);
+	vector<Node*>Y_nodes(P);
 
-	sort(X_nodes.begin(), X_nodes.end(), [&](const Node& a, const Node& b)->bool {return a.x < b.x; });
-	sort(Y_nodes.begin(), Y_nodes.end(), [&](const Node& a, const Node& b)->bool {return a.y < b.y; });
+	sort(X_nodes.begin(), X_nodes.end(), [&](const Node* a, const Node* b)->bool {return a->x < b->x; });
+	for (int i = 0; i < P.size(); i++)
+		X_nodes[i]->index = i;
 
-	Node* n= Closest_Pair_Rec(X_nodes, Y_nodes);
+	sort(Y_nodes.begin(), Y_nodes.end(), [&](const Node* a, const Node* b)->bool {return a->y < b->y; });
+
+	Node** n= Closest_Pair_Rec(X_nodes, Y_nodes);
 	cout << fixed;
 	cout.precision(2);
 	cout << Distance(n[0], n[1]);
 }
-
-
-
 int main()
 {
 	int n;
 	cin >> n;
-	
+	vector<Node*>nodes;
 	for (int i = 0; i < n; i++) {
 		double x, y;
 		cin >> x >> y;
-		Node n(x, y);
+		Node* n = new Node(x, y);
 		nodes.push_back(n);
 	}
 
-	vector<Node>X_nodes(nodes);
-	vector<Node>Y_nodes(nodes);
+	/*vector<Node*>X_nodes(nodes);
+	vector<Node*>Y_nodes(nodes);
 
-	sort(X_nodes.begin(), X_nodes.end(), [&](const Node& a, const Node& b)->bool {return a.x < b.x; });
-	sort(Y_nodes.begin(), Y_nodes.end(), [&](const Node& a, const Node& b)->bool {return a.y < b.y; });
+	sort(X_nodes.begin(), X_nodes.end(), [&](const Node* a, const Node* b)->bool {return a->x < b->x; });
+	sort(Y_nodes.begin(), Y_nodes.end(), [&](const Node* a, const Node* b)->bool {return a->y < b->y; });*/
 
 	Closest_Pair(nodes);
 }

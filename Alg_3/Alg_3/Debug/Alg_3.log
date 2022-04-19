@@ -1,6 +1,8 @@
 ﻿  源.cpp
-F:\算法\Alg\Alg_3\Alg_3\源.cpp(28,21): warning C4018: “<”: 有符号/无符号不匹配
-F:\算法\Alg\Alg_3\Alg_3\源.cpp(30,26): warning C4018: “<”: 有符号/无符号不匹配
-F:\算法\Alg\Alg_3\Alg_3\源.cpp(59,20): warning C4018: “<”: 有符号/无符号不匹配
-F:\算法\Alg\Alg_3\Alg_3\源.cpp(67,20): warning C4018: “<”: 有符号/无符号不匹配
+F:\算法\Alg\Alg_3\Alg_3\源.cpp(32,21): warning C4018: “<”: 有符号/无符号不匹配
+F:\算法\Alg\Alg_3\Alg_3\源.cpp(34,26): warning C4018: “<”: 有符号/无符号不匹配
+F:\算法\Alg\Alg_3\Alg_3\源.cpp(56,20): warning C4018: “<”: 有符号/无符号不匹配
+F:\算法\Alg\Alg_3\Alg_3\源.cpp(71,20): warning C4018: “<”: 有符号/无符号不匹配
+F:\算法\Alg\Alg_3\Alg_3\源.cpp(79,20): warning C4018: “<”: 有符号/无符号不匹配
+F:\算法\Alg\Alg_3\Alg_3\源.cpp(108,20): warning C4018: “<”: 有符号/无符号不匹配
   Alg_3.vcxproj -> F:\算法\Alg\Alg_3\Debug\Alg_3.exe
