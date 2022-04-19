@@ -11,6 +11,8 @@ class Node
 public:
 	double x;
 	double y;
+
+	//用一个不会重复的值对点划分成Q区R区
 	int index;
 	Node() {}
 	Node(double x, double y) :x(x), y(y)
@@ -21,12 +23,16 @@ double Distance(Node* n1,Node* n2) {
 	return (n1->x - n2->x) * (n1->x - n2->x) + (n1->y - n2->y) * (n1->y - n2->y);
 }
 Node** Closest_Pair_Rec(vector<Node*>Px, vector<Node*>Py) {
-	//量度所有两点距离求出最邻近点对
+	
 	/*if (Px.size() <= 1)
 		return nullptr;*/
-
+	//量度所有两点距离求出最邻近点对
 	if (Px.size() <= 3)
 	{
+
+		if (Px.size() == 2)
+			return new Node * [2]{ Px[0],Px[1] };
+
 		int n1, n2;
 		double min_len = DBL_MAX;
 		for (int i = 0; i < Px.size()-1; i++)
@@ -43,16 +49,13 @@ Node** Closest_Pair_Rec(vector<Node*>Px, vector<Node*>Py) {
 		Node** res_n = new Node*[2]{ Px[n1],Px[n2] };
 		return res_n;
 	}
-
-	double x_maxInQ=Px[Px.size()/2-1]->x;
-
+	//构造Qx、Qy、Rx、Ry ：O(N)
 	vector<Node*>Qx(Px.begin(),Px.begin()+Px.size()/2);
 	vector<Node*>Rx(Px.begin()+Px.size()/2,Px.end());
 	vector<Node*>Qy;
 	vector<Node*>Ry;
-
+	//划分线
 	int indexMid = (Qx[Qx.size() - 1]->index + Rx[Rx.size() - 1]->index)/2;
-
 	for (int i = 0; i < Py.size(); i++)
 		if (Py[i]->index <= indexMid)
 			Qy.push_back(Py[i]);
@@ -63,9 +66,9 @@ Node** Closest_Pair_Rec(vector<Node*>Px, vector<Node*>Py) {
 	double distance1 = Distance(q[0], q[1]);
 	Node** r = Closest_Pair_Rec(Rx, Ry);
 	double distance2 =Distance(r[0], r[1]);
-		
-	double min_len = min(distance1,distance2);
 
+	double min_len = min(distance1,distance2);
+	double x_maxInQ=Px[Px.size()/2-1]->x;
 	//S实际是按y排序的点集合
 	vector<Node*>S;
 	for (int i = 0; i < Py.size(); i++)
@@ -73,11 +76,10 @@ Node** Closest_Pair_Rec(vector<Node*>Px, vector<Node*>Py) {
 		if (abs(Py[i]->x - x_maxInQ) < min_len)
 			S.push_back(Py[i]);
 	}
-
 	double min_len_inS=DBL_MAX;
 	int ns1, ns2;
 	for (int i = 0; i < S.size(); i++) {
-		for (int j = i + 1; j < min(i + 7, int(S.size())); j++) {
+		for (int j = i + 1; j < min(i + 6, int(S.size())); j++) {
 			double len = Distance(S[i], S[j]);
 			if (len < min_len_inS) {
 				min_len_inS = len;
@@ -86,7 +88,6 @@ Node** Closest_Pair_Rec(vector<Node*>Px, vector<Node*>Py) {
 			}
 		}
 	}
-	
 	if (min_len_inS < min_len)
 		return new Node*[2]{ S[ns1],S[ns2] };
 
