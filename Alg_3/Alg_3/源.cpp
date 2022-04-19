@@ -66,7 +66,7 @@ Node* Closest_Pair_Rec(vector<Node>Px, vector<Node>Py) {
 	double min_len_inS=DBL_MAX;
 	int ns1, ns2;
 	for (int i = 0; i < S.size(); i++) {
-		for (int j = i + 1; j < min(i + 12, int(S.size())); j++) {
+		for (int j = i + 1; j < min(i + 7, int(S.size())); j++) {
 			double len = Distance(S[i], S[j]);
 			if (len < min_len_inS) {
 				min_len_inS = len;
