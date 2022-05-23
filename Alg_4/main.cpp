@@ -34,6 +34,23 @@ int main() {
     int m = s1.size();
     int n = s2.size();
 
+    /*int dp[m+1][n+1];
+    for(int i=0;i<=m;i++) {
+        dp[i][0]=i*k;
+    }
+    for(int j=0;j<=n;j++) {
+        dp[0][j]=j*k;
+    }
+    for(int j=1;j<=n;j++) {
+        for(int i=1;i<=m;i++) {
+            int a1=abs(s1[i-1]-s2[j-1])+dp[i-1][j-1];
+            int a2=k+dp[i-1][j];
+            int a3=k+dp[i][j-1];
+            dp[i][j]=min(a1,min(a2,a3));
+        }
+    }
+    cout<< dp[m][n] << endl;*/
+
     int A[m+1][2];
     for(int i=0;i<=m;i++) {
         A[i][0]=i*k;
