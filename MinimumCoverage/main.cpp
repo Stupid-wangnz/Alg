@@ -87,7 +87,7 @@ int main() {
 
 
     //第二组测试用例，答案为-1，没有最优解
-   /* Len=5;
+    /*Len=5;
     N=2;
 
     vector<int>Locations({1,2});
