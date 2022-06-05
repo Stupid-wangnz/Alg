@@ -1,56 +1,92 @@
 #include <iostream>
 #include <vector>
+#include <algorithm>
 using namespace std;
+
+int Len=10;
+int N=6;
+
+vector<pair<int,int>> preConditioning(vector<int>&Locations,vector<vector<int>>&Move,vector<int>&Range){
+
+    vector<pair<int,int>>Region;
+    for(int i=0;i<N;i++){
+        int l=max(0,Locations[i]-Move[i][0]-Range[i]);
+        int r=min(Len,Locations[i]+Move[i][1]+Range[i]);
+        pair<int,int>P(l,r);
+        if(Range[i]==0){
+            continue;
+        }
+        Region.push_back(P);
+    }
+    N=Region.size();
+    return Region;
+}
+
+int OPT1(vector<pair<int,int>>&Region){
+    vector<int>dp(Len+1,INT_MAX);
+    dp[0]=0;
+    for(int i=1;i<=Len;i++){
+        for(auto r:Region){
+            if(r.first<i&&r.second>=i)
+                dp[i]=min(dp[i],dp[r.first]+1);
+        }
+    }
+    return dp[Len];
+}
+
+int OPT2(vector<pair<int,int>>&Region){
+    sort(Region.begin(),Region.end(),[](const auto&t1,const auto&t2){return t1.first<t2.first;});
+    vector<int>dp(Len+1,INT_MAX-1);
+    dp[0]=0;
+    for(int i=0;i<Region.size();i++){
+        int st=Region[i].first;
+        int ed=Region[i].second;
+        for(int k=st;k<=ed;k++){
+            dp[k]=min(dp[k],dp[st]+1);
+        }
+    }
+
+    return dp[Len]==INT_MAX-1?-1:dp[Len];
+}
+
+int Greedy(vector<pair<int,int>>&Region){
+    sort(Region.begin(),Region.end(),[](const auto&t1,const auto&t2){return t1.first<t2.first||(t1.first==t2.first&&t1.second>t2.second);});
+    int i=0,ans=0,st=0,ed=0;
+    while(i<Region.size()&&st<Len){
+        if(Region[i].first<=st){
+            ed=st;
+            while(i<Region.size()&&Region[i].first<=ed){
+                st=max(st,Region[i].second);
+                i++;
+            }
+            ans++;
+        }
+        else
+            break;
+    }
+    return st>=Len?ans:-1;
+}
 
 int main() {
     /*
      * 输入的信息
-     * @param:n 是一个整数，表示赛道有n段
-     * @param:rangesL[] 是一个数组，表示n+1个机位，其中ranges[i]表示第i个摄像机能向左的移动范围
-     * @param:rangesR[] 是一个数组，表示n+1个机位，其中ranges[i]表示第i个摄像机能向右的移动范围
+     * @param:Len,赛道的长度
+     * @param:N,摄像机的数量
+     * @param:Move[]
+     * @param:range[],表示i号摄像机的摄影幅度
+     * @param:Locations[]
      */
-    int n;
-    cin >> n;
-    vector<int> rangesL(n+1);
-    for (int i = 0; i < n+1; i++) {
-        cin >> rangesL[i];
-    }
 
-    vector<int> rangesR(n+1);
-    for (int i = 0; i < n+1; i++) {
-        cin >> rangesR[i];
-    }
+    vector<int>Locations({1,5,9,6,3,7});
+    vector<vector<int>>Move({{0,0},{0,0},{0,0},{3,1},{1,1},{1,1}});
+    vector<int>Range({1,1,1,2,1,1});
 
-    /*
-     * 输出的信息
-     * @param:ans 是一个整数，表示最少需要多少摄像机
-     */
-    int ans = 0;
 
-    vector<int> prev(n+1,0);
-    for(int i = 1; i < n+1; i++) {
-        prev[i] = i;
-    }
-    for(int i= 1; i < n+1; i++) {
-        int li=max(0,i-rangesL[i]);
-        int ri=min(n,i+rangesR[i]);
-        prev[ri]=min(prev[ri],li);
-    }
+    vector<pair<int,int>>Region= preConditioning(Locations,Move,Range);
+    cout<<"result of dynamic programming1:minNum="<<OPT1(Region)<<endl;
+    cout<<"result of dynamic programming2:minNum="<<OPT2(Region)<<endl;
+    cout<<"result of Greedy Algorithm:minNum="<<Greedy(Region)<<endl;
 
-    vector<int> dp(n+1,-1);
-    dp[0]=0;
-    for(int i=1;i<=n;i++){
-        for(int j=prev[i];j<i;j++){
-            if(dp[j]!=-1){
-                dp[i]=max(dp[i],dp[j]+1);
-            }
-            //dp[i]=min(dp[i],dp[j]+1);
-        }
-    }
-    if(dp[n]==-1){
-        cout<<-1<<endl;
-    }else{
-        cout<<dp[n]<<endl;
-    }
+
     return 0;
 }
