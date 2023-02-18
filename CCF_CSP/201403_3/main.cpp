@@ -10,6 +10,7 @@ int idx(char c) {
 int opt[26]{};
 
 int main() {
+
     char format[52];
     cin >> format;
     int x = 0;
