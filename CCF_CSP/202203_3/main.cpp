@@ -103,6 +103,7 @@ int main() {
             fnode.tasks.push_back(a);
             cout<<fnode.id<<" ";
             nodes[fnode.id] = fnode;
+
         }
         cout<<endl;
     }
