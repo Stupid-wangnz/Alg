@@ -1,10 +1,10 @@
 # String
 
-| 滑动窗口 | Medium | 3.   |
-| -------- | ------ | ---- |
-|          |        |      |
-|          |        |      |
-|          |        |      |
+| 滑动窗口 | Medium | 3.                    |
+| -------- | ------ | --------------------- |
+|          |        |                       |
+| KMP算法  | Medium | 28.找出第一个子串下标 |
+|          |        |                       |
 
 ## 3.无重复字符的最长子串
 
@@ -61,6 +61,63 @@ public:
             }
         }
         return ans;
+    }
+};
+```
+
+## 28.找出字符串中第一个匹配项的下标
+
+暴力解法O(mn):
+
+```c++
+class Solution {
+public:
+    int strStr(string haystack, string needle) {
+        int needle_len = needle.size();
+        int n = haystack.size();
+        for(int i=0;i<n-needle_len+1;i++){
+            bool flag = true;
+            for(int j=i;j<needle_len+i;j++){
+                if(needle[j-i] != haystack[j]){
+                    flag = false;
+                    break;
+                }
+            }
+            if(flag)
+                return i;
+        }
+        return -1;
+    }
+};
+```
+
+KMP O(m+n):
+
+**没看懂**
+
+```
+class Solution {
+public:
+    int strStr(string s, string p) {
+        int n = s.size(), m = p.size();
+        if(m == 0) return 0;
+        //设置哨兵
+        s.insert(s.begin(),' ');
+        p.insert(p.begin(),' ');
+        vector<int> next(m + 1);
+        //预处理next数组
+        for(int i = 2, j = 0; i <= m; i++){
+            while(j and p[i] != p[j + 1]) j = next[j];
+            if(p[i] == p[j + 1]) j++;
+            next[i] = j;
+        }
+        //匹配过程
+        for(int i = 1, j = 0; i <= n; i++){
+            while(j and s[i] != p[j + 1]) j = next[j];
+            if(s[i] == p[j + 1]) j++;
+            if(j == m) return i - m;
+        }
+        return -1;
     }
 };
 ```
