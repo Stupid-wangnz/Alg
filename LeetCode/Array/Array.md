@@ -5,6 +5,8 @@
 |            | Easy          | 27.移除元素                                                  |
 | **二分法** | **difficult** | [4.寻找两个正序数组的中位数.md](4寻找两个正序数组的中位数\4.md) |
 |            |               |                                                              |
+|            | medium        | [33. 搜索旋转排序数组](https://leetcode.cn/problems/search-in-rotated-sorted-array/) |
+|            | medium        | [34. 在排序数组中查找元素的第一个和最后一个位置](https://leetcode.cn/problems/find-first-and-last-position-of-element-in-sorted-array/) |
 
 
 
@@ -161,6 +163,80 @@ public:
             s++;
         }
         return s;
+    }
+};
+```
+
+
+
+## 33. 搜索旋转排序数组
+
+先找到target在的那一段有序数组
+
+```
+class Solution {
+public:
+    int search(vector<int>& nums, int target) {
+        int n = nums.size();
+        if (n==0) 
+            return -1;
+
+        if (n == 1) 
+            return nums[0] == target ? 0 : -1;
+    
+        int l = 0, r = n - 1;
+        while (l <= r) {
+            int mid =(l+r)/2;
+            if (nums[mid] == target) 
+                return mid;
+            if (nums[0] <= nums[mid]) {
+                if (nums[0] <= target && target < nums[mid]) {
+                    r = mid - 1;
+                } else {
+                    l = mid + 1;
+                }
+            } else {
+                if (nums[mid] < target && target <= nums[n - 1]) {
+                    l = mid + 1;
+                } else {
+                    r = mid - 1;
+                }
+            }
+        }
+        return -1;
+    }
+};
+```
+
+## 34. 在排序数组中查找元素的第一个和最后一个位置
+
+其实就是简单的二分搜索，当遍历到target的时候别停，根据当前在找左边界还是右边界来更新，继续搜索。
+
+```
+class Solution {
+public:
+    int binarySearch(vector<int>& nums, int target, bool left){
+        int l=0, r=nums.size()-1;
+        int res=-1;
+        while(l<=r){
+            int mid = (l+r)/2;
+            if(nums[mid]==target){
+                res = mid;
+                if(left)
+                    r = mid-1;
+                else
+                    l = mid+1;
+            }
+            if(nums[mid]<target)
+                l=mid+1;
+            if(nums[mid]>target)
+                r=mid-1;
+        }
+        return res;
+    }
+
+    vector<int> searchRange(vector<int>& nums, int target) {
+        return {binarySearch(nums, target, true), binarySearch(nums, target, false)};
     }
 };
 ```
